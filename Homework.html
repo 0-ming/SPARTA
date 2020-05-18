@@ -13,9 +13,9 @@
     <title>거북이코딩클럽 | 매운 콘칩 판매 페이지</title>
     <link href="https://fonts.googleapis.com/css2?family=Yeon+Sung&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Yeon+Sung&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     <style>
-     
         .minah {
             text-align: center;
             margin: 50px auto;
@@ -27,23 +27,110 @@
             font-family: 'Yeon Sung', cursive;
             font-size: 15px;
         }
+
+        .exchange-rate {
+            text-align: left;
+            color: royalblue;
+        }
+
+        .orderlist {
+            text-align: center;
+            margin: 50px auto;
+
+        }
     </style>
 
+    //ALERT WHEN EMPTY, ELSE ORDER ALERT FUNCTION
     <script>
-    function hey () {
-alert('주문이 완료되었습니다.');
 
-    }
-     </script>
+        function hey() {
+            let order_name = $('#ordername').val();
+
+            if (order_name == '') {
+                alert('이름을 입력하세요')
+            } else {
+                let order_quantity = $('#quantity').val();
+
+                if (order_quantity < '1') {
+                    alert('수량을 선택하세요')
+                }
+                else {
+                    let order_address = $('#address').val();
+
+                    if (order_address == '') {
+                        alert('주소를 입력하세요')
+                    }
+                    else {
+                        let order_phoneno = $('#phoneno').val();
+
+                        if (order_phoneno.includes('-')) {
+////Q. 여기부터 왜 틀렸는지 모르겠어요 
+                            if (order_phoneno.length == '13') {
+                                let phoneno1 = order_phoneno.split('-')[0];
+
+                                if (phoneno1 == '010') {
+                                    let phoneno2 = order_phoneno.split('-')[1];
+
+                                    if (phoneno2.length == '4') {
+                                        let phoneno3 = order_phoneno.split('-')[2];
+
+                                        if (phoneno3.length == '4') {
+                                            alert('주문이 완료되었습니다👏👏👏')
+//// Q. 이름이 입력되게 어떻게 하는지?...
+                                            let order_temp_html = `<tr><td>${order_name}</td> <td>${order_quantity}</td> <td>${order_address}</td><td>${order_phoneno}</td></tr>`
+                                            $('#orderlist').append(order_temp_html);
+                                        }
+                                        else {
+                                            alert('전화번호 입력 형식이 틀립니다.010-0000-0000으로 입력해주세요')
+                                        }
+                                    } else {
+                                        alert('전화번호 입력 형식이 틀립니다.010-0000-0000으로 입력해주세요')
+                                    }
+                                } else {
+                                    alert('전화번호 입력 형식이 틀립니다.010-0000-0000으로 입력해주세요')
+                                }
+                            } else {
+                                alert('전화번호 입력 형식이 틀립니다.010-0000-0000으로 입력해주세요')
+                            }
+                        } else {
+                            alert('전화번호 입력 형식이 틀립니다.010-0000-0000으로 입력해주세요')
+                        }
+                    }
+                }
+            }
+        }
+
+////Q. 이렇게 안 하고 function을 따로 줘도 순차적으로 진행하는지?
+
+    </script>
+
+    //EXCHANGE RATE UPDATE FUNCTION
+    <script>
+/// Q. 이건 왜 실행이 안 될까요?ㅠㅠ
+        function USDexchangerate() {
+            $('#usdkrw').show();
+            $.ajax({
+                type: "GET",
+                url: "https://api.manana.kr/exchange/rate.json",
+                data: {},
+                success: function (response) {
+                    let exchange_rate = response[1][2];
+                    $('#usdkrw').append(exchange_rate);
+                }
+            })
+        }
+    </script>
+
 
 </head>
 
 <body>
+
     <div class="minah">
 
 
 
-        <img style="width: 200px ;"src="https://shopping-phinf.pstatic.net/main_6243756/6243756547.1.jpg?type=f133" />
+        <img style="width: 200px ;" src="https://shopping-phinf.pstatic.net/main_6243756/6243756547.1.jpg?type=f133" />
         <p>
 
             <span style="font-size: 30px;"> 매운 콘칩을 팝니다</span> <span style="font-size: 15px;"> 가격: 1,000원/개</span>
@@ -58,14 +145,24 @@ alert('주문이 완료되었습니다.');
 
             </p>
 
+            <p>
+                <div class="exchange-rate">
 
+                    달러-원 환율: <div>
 
+                        <body onload="USDexchangerate()"> </body>
+                        <tbody id="usdkrw">
+
+                        </tbody>
+                    </div>
+                </div>
+            </p>
 
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="inputGroup-sizing-default"> 주문자 이름 </span>
+                    <span class="input-group-text"> 주문자 이름 </span>
                 </div>
-                <input type="text" class="form-control" aria-label="Default"
+                <input id="ordername" type="text" class="form-control" aria-label="Default"
                     aria-describedby="inputGroup-sizing-default">
             </div>
 
@@ -73,7 +170,7 @@ alert('주문이 완료되었습니다.');
                 <div class="input-group-prepend">
                     <label class="input-group-text" for="inputGroupSelect01">수량</label>
                 </div>
-                <select class="custom-select" id="inputGroupSelect01">
+                <select class="custom-select" id="quantity">
                     <option selected> - 수량을 입력해주세요 - </option>
                     <option value="1">1</option>
                     <option value="2">2</option>
@@ -81,27 +178,41 @@ alert('주문이 완료되었습니다.');
                 </select>
             </div>
 
-           
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="inputGroup-sizing-default"> 주소 </span>
+                    <span class="input-group-text"> 주소 </span>
                 </div>
-                <input type="text" class="form-control" aria-label="Default"
+                <input id="address" type="text" class="form-control" aria-label="Default"
                     aria-describedby="inputGroup-sizing-default">
             </div>
 
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="inputGroup-sizing-default"> 전화번호 </span>
+                    <span class="input-group-text"> 전화번호 </span>
                 </div>
-                <input type="text" class="form-control" aria-label="Default"
+                <input id="phoneno" type="text" class="form-control" aria-label="Default"
                     aria-describedby="inputGroup-sizing-default">
             </div>
 
-            <button onclick="hey()" type="button" class="btn btn-primary btn-lg"> 주문하기 </button>
+            <button id="add-order-info" onclick="hey()" type="button" class="btn btn-primary btn-lg"> 주문하기 </button>
 
-    </div>
 
+            <div class="orderlist">
+                <p>
+
+                    <tr>
+
+
+                        <td>이름</td>
+                        <td>수량</td>
+                        <td>주소</td>
+                        <td>전화번호</td>
+
+
+                    </tr>
+
+                </p>
+            </div>
 </body>
 
 </html>

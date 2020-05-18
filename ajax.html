@@ -23,8 +23,8 @@
             border: 1px solid;
         }
 
-        .low-bike {
-            color:teal;
+        .low-bike div {
+            color:l;
         }
     </style>
 
@@ -47,7 +47,7 @@
                         let parkingBikeTotCnt = rows[i]['parkingBikeTotCnt'];
 
                         if (parkingBikeTotCnt < "5") {
-                            let temp_html = `<tr class ="low-bike"><div><td>${stationName}</td> <td>${rackTotCnt}</td> <td>${parkingBikeTotCnt}</td></div></tr>`
+                            let temp_html = `<tr class ="low-bike"><td><div>${stationName}</div></td> <td>${rackTotCnt}</td> <td>${parkingBikeTotCnt}</td></tr>`
                             $('#names-q1').append(temp_html);
 
                         } else {
