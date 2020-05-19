@@ -13,6 +13,7 @@
     <title>거북이코딩클럽 | 매운 콘칩 판매 페이지</title>
     <link href="https://fonts.googleapis.com/css2?family=Yeon+Sung&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Yeon+Sung&display=swap" rel="stylesheet">
+    <!-- jQuery를 import 합니다 -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     <style>
@@ -35,7 +36,26 @@
 
         .orderlist {
             text-align: center;
-            margin: 50px auto;
+            margin: 100px auto;
+        }
+    </style>
+    <style type="text/css">
+        table {
+            border: 1px solid;
+            border-collapse: collapse;
+            width: auto;
+            margin-top: 75px;
+            align-items: center;
+            align-self: center;
+
+        }
+
+        td,
+        th {
+            padding: 10px;
+            border: 1px solid;
+            margin: 10px;
+            width: max-content;
 
         }
     </style>
@@ -64,28 +84,23 @@
                         let order_phoneno = $('#phoneno').val();
 
                         if (order_phoneno.includes('-')) {
-////Q. 여기부터 왜 틀렸는지 모르겠어요 
+
                             if (order_phoneno.length == '13') {
-                                let phoneno1 = order_phoneno.split('-')[0];
+                                let phoneno2 = order_phoneno.split('-')[1];
+                                let phoneno3 = order_phoneno.split('-')[2];
 
-                                if (phoneno1 == '010') {
-                                    let phoneno2 = order_phoneno.split('-')[1];
+                                if (phoneno2.length == '4', phoneno3.length == '4') {
+                                    alert('주문이 완료되었습니다👏👏👏')
+                                    ////이름이 입력되긴 하는데, 
+                                    let order_name = $('#ordername').val();
+                                    let order_quantity = $('#quantity').val();
+                                    let order_address = $('#address').val();
+                                    let order_phoneno = $('#phoneno').val();
+                                    let order_temp_html = `<tr><td>${order_name}</td> <td>${order_quantity}</td> <td>${order_address}</td><td>${order_phoneno}</td></tr>`
+                                    $('#order-list').append(order_temp_html);
 
-                                    if (phoneno2.length == '4') {
-                                        let phoneno3 = order_phoneno.split('-')[2];
 
-                                        if (phoneno3.length == '4') {
-                                            alert('주문이 완료되었습니다👏👏👏')
-//// Q. 이름이 입력되게 어떻게 하는지?...
-                                            let order_temp_html = `<tr><td>${order_name}</td> <td>${order_quantity}</td> <td>${order_address}</td><td>${order_phoneno}</td></tr>`
-                                            $('#orderlist').append(order_temp_html);
-                                        }
-                                        else {
-                                            alert('전화번호 입력 형식이 틀립니다.010-0000-0000으로 입력해주세요')
-                                        }
-                                    } else {
-                                        alert('전화번호 입력 형식이 틀립니다.010-0000-0000으로 입력해주세요')
-                                    }
+
                                 } else {
                                     alert('전화번호 입력 형식이 틀립니다.010-0000-0000으로 입력해주세요')
                                 }
@@ -100,6 +115,7 @@
             }
         }
 
+
 ////Q. 이렇게 안 하고 function을 따로 줘도 순차적으로 진행하는지?
 
     </script>
@@ -107,18 +123,19 @@
     //EXCHANGE RATE UPDATE FUNCTION
     <script>
 /// Q. 이건 왜 실행이 안 될까요?ㅠㅠ
-        function USDexchangerate() {
-            $('#usdkrw').show();
-            $.ajax({
-                type: "GET",
-                url: "https://api.manana.kr/exchange/rate.json",
-                data: {},
-                success: function (response) {
-                    let exchange_rate = response[1][2];
-                    $('#usdkrw').append(exchange_rate);
-                }
-            })
-        }
+
+        $.ajax({
+            type: "GET",
+            url: "https://api.manana.kr/exchange/rate.json",
+            data: {},
+            success: function (response) {
+             
+                let exchange_rate = response [1][2];
+                console.log(exchange_rate);
+                $('#usdkrw').append(exchange_rate);
+            }
+        })
+
     </script>
 
 
@@ -148,13 +165,10 @@
             <p>
                 <div class="exchange-rate">
 
-                    달러-원 환율: <div>
-
-                        <body onload="USDexchangerate()"> </body>
+                    달러-원 환율: 
                         <tbody id="usdkrw">
 
                         </tbody>
-                    </div>
                 </div>
             </p>
 
@@ -190,29 +204,26 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"> 전화번호 </span>
                 </div>
-                <input id="phoneno" type="text" class="form-control" aria-label="Default"
+                <input id="phoneno" class="form-control" aria-label="Default"
                     aria-describedby="inputGroup-sizing-default">
             </div>
 
             <button id="add-order-info" onclick="hey()" type="button" class="btn btn-primary btn-lg"> 주문하기 </button>
 
+            <ul></ul>
+            <table>
 
-            <div class="orderlist">
-                <p>
-
+                <thead>
                     <tr>
-
-
                         <td>이름</td>
                         <td>수량</td>
                         <td>주소</td>
                         <td>전화번호</td>
-
-
                     </tr>
-
-                </p>
-            </div>
+                </thead>
+                <tbody id="order-list">
+                </tbody>
+            </table>
 </body>
 
 </html>
