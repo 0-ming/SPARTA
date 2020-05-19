@@ -122,17 +122,17 @@
 
     //EXCHANGE RATE UPDATE FUNCTION
     <script>
-/// Q. 이건 왜 실행이 안 될까요?ㅠㅠ
+        /// Q. 이건 왜 실행이 안 될까요?ㅠㅠ 
+        ///1. 데이터 주소를 어떻게 줘야할지 모르겠습니다......(api가 딕셔너리로 되어있는데, 전체 이름이 지정이 안 돼있어요)
 
         $.ajax({
             type: "GET",
             url: "https://api.manana.kr/exchange/rate.json",
             data: {},
             success: function (response) {
-             
-                let exchange_rate = response [1][2];
-                console.log(exchange_rate);
-                $('#usdkrw').append(exchange_rate);
+                let exchange_rate = response[1]["rate"];
+                let USD_KRW_rate = `<tbody> ${exchange_rate}</tbody>`
+                $('#usdkrw').append(USD_KRW_rate);
             }
         })
 
@@ -165,10 +165,10 @@
             <p>
                 <div class="exchange-rate">
 
-                    달러-원 환율: 
-                        <tbody id="usdkrw">
+                    달러-원 환율:
+                    <tbody id="usdkrw">
 
-                        </tbody>
+                    </tbody>
                 </div>
             </p>
 
