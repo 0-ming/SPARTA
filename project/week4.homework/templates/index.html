@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title> 거북이코딩클럽|매운콘칩 판매 페이지</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poor+Story&display=swap" rel="stylesheet">
+    <!-- jQuery를 import 합니다 -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <style>
+        .all {
+            text-align: center;
+            margin: 50px auto;
+            width: 500px;
+            font-family: 'Poor Story', cursive;
+        }
+
+        .설명 {
+            font-family: 'Poor Story', cursive;
+            font-size: 15px;
+        }
+
+        .exchange-rate {
+            text-align: left;
+            color: royalblue;
+        }
+
+        .orderlist {
+            text-align: center;
+            margin: 100px auto;
+        }
+    </style>
+    <style type="text/css">
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 75px;
+            align-items: center;
+            align-self: center;
+        }
+
+        td,
+        th {
+            padding: 10px;
+            margin: 10px;
+            width: max-content;
+            border-bottom: 1px solid;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "https://api.manana.kr/exchange/rate.json",
+                data: {},
+                success: function (response) {
+                    let exchange_rate = response[1]["rate"];
+                    $('#usdkrw').append(exchange_rate);
+                }
+            })
+        });
+    </script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#order-list').html('');
+            listing();
+        });
+
+        function make_order() {
+            let order_name = $('#ordername').val();
+            let order_quantity = $('#quantity').val();
+            let order_address = $('#address').val();
+            let order_phoneno = $('#phoneno').val();
+
+            if (order_name == '') {
+                alert('이름을 입력하세요')
+            } else if (order_quantity == '0') {
+                alert('수량을 선택하세요')
+            } else if (order_address == '') {
+                alert('주소를 입력하세요')
+            } else if (order_phoneno == '') {
+                alert('전화번호를 입력하세요')
+            } else {
+                if (order_phoneno.includes('-')) {
+
+                    if (order_phoneno.length == '13') {
+                        let phoneno1 = order_phoneno.split('-')[0];
+                        let phoneno2 = order_phoneno.split('-')[1];
+                        let phoneno3 = order_phoneno.split('-')[2];
+
+                        let regExp = /^\d{3}-\d{3,4}-\d{4}$/;
+                        if (regExp.test(order_phoneno)) {
+                            let order_temp_html = `<tr><td>${order_name}</td> <td>${order_quantity}</td> <td>${order_address}</td><td>${order_phoneno}</td></tr>`
+                            $('#order-list').append(order_temp_html);
+                            $('#ordername').val('');
+                            $('#quantity').val('');
+                            $('#address').val('');
+                            $('#phoneno').val('');
+
+                            $.ajax({
+                                type: 'POST', // 타입을 작성합니다.
+                                url: '/orders', // url을 작성합니다.
+                                data: { ordername_give: order_name, orderquantity_give: order_quantity, orderaddress_give: order_address, orderphoneno_give: order_phoneno },
+                                success: function (response) {
+                                    if (response['result'] == 'success') {
+                                        alert(response['msg']);
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        } else {
+                            alert('전화번호 입력 형식이 틀립니다.010-0000-0000으로 입력해주세요')
+                        }
+                    } else {
+                        alert('전화번호 입력 형식이 틀립니다.010-0000-0000으로 입력해주세요')
+                    }
+                } else {
+                    alert('전화번호 입력 형식이 틀립니다.010-0000-0000으로 입력해주세요')
+                }
+            }
+
+        }
+
+        function listing() {
+            $.ajax({
+                type: "GET",
+                url: "/orders",
+                data: {},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        let orders = response['orders'];
+                        for (let i = 0; i < orders.length; i++) {
+                            makeorders(orders[i]['order_name'], orders[i]['order_quantity'], orders[i]['order_address'], orders[i]['order_phoneno']);
+                        }
+                    }
+                    else {
+                        alert('리스트를 받아오지 못했습니다');
+                    }
+                }
+            });
+        }
+
+        function makeorders(order_name, order_quantity, order_address, order_phoneno) {
+            let temp_html = `<tr>
+                        <td>${order_name}</td>
+                        <td>${order_quantity}</td>
+                        <td>${order_address}</td>
+                        <td>${order_phoneno}</td>
+                    </tr>`;
+            $('#order-list').append(temp_html);
+        }
+
+    </script>
+
+
+</head>
+
+<body>
+
+    <div class="all">
+
+        <img style="width: 200px ;" src="https://shopping-phinf.pstatic.net/main_6243756/6243756547.1.jpg?type=f133" />
+        <p>
+            <span style="font-size: 30px;"> 매운 콘칩을 팝니다</span> <span style="font-size: 15px;"> 가격: 1,000원/개</span>
+            <p>
+                <p></p>
+                <div class="설명">
+                    <span> 매운 콘칩은 그냥 콘칩보다 매콤하고 맛있어요.
+                        맥주 안주로도 제격이랍니다~~
+                    </span>
+                </div>
+            </p>
+
+            <p>
+                <div class="exchange-rate">
+
+                    <div id="usdkrw"> 달러-원 환율:
+                    </div>
+                </div>
+            </p>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> 주문자 이름 </span>
+                </div>
+                <input id="ordername" type="text" class="form-control" aria-label="Default"
+                    aria-describedby="inputGroup-sizing-default">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">수량</label>
+                </div>
+                <select class="custom-select" id="quantity">
+                    <option value="0" selected> - 수량을 입력해주세요 - </option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> 주소 </span>
+                </div>
+                <input id="address" type="text" class="form-control" aria-label="Default"
+                    aria-describedby="inputGroup-sizing-default">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> 전화번호 </span>
+                </div>
+                <input id="phoneno" class="form-control" aria-label="Default"
+                    aria-describedby="inputGroup-sizing-default">
+            </div>
+
+            <button id="add-order-info" onclick="make_order()" type="button" class="btn btn-primary btn-lg"> 주문하기
+            </button>
+
+            <ul></ul>
+            <table>
+                <thead>
+                    <tr>
+                        <td>이름</td>
+                        <td>수량</td>
+                        <td>주소</td>
+                        <td>전화번호</td>
+                    </tr>
+                </thead>
+                <tbody id="order-list">
+                </tbody>
+            </table>
+
+</html>
